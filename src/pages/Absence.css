@@ -110,7 +110,7 @@
 
 .status-absent {
     background-color: var(--status-absent-bg);
-    color: var(--status-absent-text);
+    color: white
 }
 
 .status-late {

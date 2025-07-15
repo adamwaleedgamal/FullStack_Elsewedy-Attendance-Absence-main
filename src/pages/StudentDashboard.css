@@ -3,7 +3,7 @@
 
 :root {
     --primary-red: #E60028;
-    --light-pink: #F8E3E4
+    --light-pink: #F8E3E4; /* <-- Semicolon added */
     --active-blue: #3E8BFF;
     --text-dark: #333;
     --text-light: #888;
