@@ -1,0 +1,101 @@
+/* --- src/pages/AdminProfilePage.css --- */
+
+.admin-profile-card {
+    padding: 25px 30px;
+}
+
+.admin-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.admin-profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.admin-profile-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.admin-profile-role {
+    margin: 0;
+    font-size: 14px;
+    color: #6c757d;
+    background-color: #e9eefa;
+    color: #4a69bd;
+    padding: 4px 12px;
+    border-radius: 15px;
+    display: inline-block;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.admin-profile-body {
+    padding-top: 25px;
+}
+
+.admin-profile-body h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #495057;
+    margin: 0 0 20px 0;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.detail-item {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.detail-label {
+    display: block;
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: #343a40;
+}
+
+.detail-value.status-active {
+    color: #28a745;
+}
+
+.divider-line {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin: 30px 0;
+}
+
+.permissions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.permission-item {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 12px;
+    border-radius: 8px;
+}
