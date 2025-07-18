@@ -1,19 +1,23 @@
+// --- File: src/pages/components/TeacherSidebar.js ---
+
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { IoHomeOutline, IoCloseCircleOutline, IoCalendarOutline } from 'react-icons/io5';
+import { IoHome, IoCloseCircleOutline, IoCalendarOutline, IoStorefront, IoDesktop } from 'react-icons/io5';
 
-import '../StudentDashboard.css'; // We can still use the same styles
+import '../StudentDashboard.css'; // Uses the same styles
 import logo from '../../assets/logo.png';
-import profilePic from '../../assets/profile.png'; // Adjust the path as needed
+import profilePic from '../../assets/profile.png';
 
 const TeacherSidebar = ({ user }) => {
     const navigate = useNavigate();
     const location = useLocation(); // Hook to get the current URL path
 
     const navItems = [
-        { path: '/dashboard', label: 'Dashboard', icon: <IoHomeOutline className="nav-icon" /> },
+        { path: '#', label: 'Main Tabs', icon: <IoHome className="nav-icon" /> },
+        { path: '/dashboard', label: 'Dashboard', icon: <IoDesktop className="nav-icon" /> },
         { path: '/absence', label: 'Absence and Behavior Records', icon: <IoCloseCircleOutline className="nav-icon" /> },
         { path: '/attendance', label: 'Attendance View', icon: <IoCalendarOutline className="nav-icon" /> },
+        { path: '/HomePage', label: 'E-Learing', icon: <IoStorefront className="nav-icon" /> },
     ];
 
     return (
@@ -32,8 +36,8 @@ const TeacherSidebar = ({ user }) => {
                 <ul className="nav-submenu">
                     {navItems.map(item => (
                         <li 
-                            key={item.path} 
-                            onClick={() => navigate(item.path)}
+                            key={item.label} 
+                            onClick={() => item.path !== '#' && navigate(item.path)}
                             // Set 'active' class if the current path matches the item's path
                             className={location.pathname === item.path ? 'active' : ''}
                         >
