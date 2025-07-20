@@ -94,7 +94,7 @@ const CloseIcon = () => React.createElement('svg', { width: "24", height: "24", 
 // --- Self-Contained Components ---
 const Header = ({ onAddClick }) => React.createElement('header', null,
     React.createElement('nav', { className: 'container' },
-        React.createElement(Link, { to: "/homepage", className: 'logo' }, 'Sewedy Learning'),
+        React.createElement(Link, { to: "/homepage", className: 'logo' }, 'ELearning'),
         React.createElement('button', { onClick: onAddClick, className: 'button primary' }, 'Add New Stack')
     )
 );
@@ -167,11 +167,7 @@ const StackCard = ({ stack, onEdit, onDelete }) => {
             React.createElement('h3', null, stack.title),
             React.createElement('p', null, stack.description),
             React.createElement('div', { className: 'stack-card-actions' },
-                // --- THIS IS THE NEW BUTTON ---
-                // It uses the <Link> component from react-router-dom to navigate.
-                // The URL is dynamically created using the stack's ID.
-                React.createElement(Link, { to: `/videos/${stack.id}`, className: 'button primary' }, 'View Videos'),
-                
+                React.createElement(Link, { to: `/videos/junior/${stack.id}`, className: 'button primary' }, 'View Videos'),
                 React.createElement('button', { onClick: () => onEdit(stack), className: 'button secondary' }, 'Edit'),
                 React.createElement('button', { onClick: () => onDelete(stack.id), className: 'button delete' }, 'Delete')
             )

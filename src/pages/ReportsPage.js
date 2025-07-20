@@ -1,174 +1,170 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// --- File: src/pages/ReportsPage.js (FINAL AND CORRECTED) ---
 
-// Import necessary icons
-import {
-  IoSearchOutline, IoNotificationsOutline, IoCalendarOutline, IoDocumentTextOutline,
-  IoHomeOutline, IoPeopleOutline, IoSettingsOutline, IoDownloadOutline
-} from 'react-icons/io5';
+import React, { useState, useEffect } from 'react';
 
-// Reuse the same CSS files for a consistent look
+// Import reusable components
+import AdminSidebar from './components/AdminSidebar';
+import AdminHeader from './components/AdminHeader';
+
+// Import CSS
 import './StudentDashboard.css';
-import './StaffDashboard.css'; 
+import './StaffDashboard.css';
 
-import logo from '../assets/logo.png';
-import managerAvatar from '../assets/manger.png';
+// --- NEW MOCK DATA ---
+const mockReports = [
+    {
+        id: 1678886400000, // A unique ID based on a timestamp
+        date: '2024-03-15',
+        studentName: 'Ali Hassan',
+        description: 'Student showed excellent participation in the group project but needs to focus more on individual assignments.',
+        specialistSignature: 'Dr. Mona Fikry',
+        status: 'Accepted'
+    },
+    {
+        id: 1678972800000,
+        date: '2024-03-16',
+        studentName: 'Nour Tarek',
+        description: 'Nour has shown significant improvement in her problem-solving skills this week.',
+        specialistSignature: 'Eng. Sherif Hamdy',
+        status: 'Pending'
+    },
+    {
+        id: 1679059200000,
+        date: '2024-03-17',
+        studentName: 'Laila Mostafa',
+        description: 'Laila was disruptive during the session and did not complete the assigned task. Recommend a follow-up.',
+        specialistSignature: 'Mr. Mohamed Abdelmged', // As requested
+        status: 'Declined'
+    }
+];
+
+// --- NEW Confirmation Modal Component ---
+const ConfirmationModal = ({ show, onClose, onConfirm, title, actionType, children }) => {
+    if (!show) {
+        return null;
+    }
+
+    // Determine button class based on action
+    const confirmButtonClass = actionType === 'Accept' ? 'btn-confirm-accept' : 'btn-confirm-decline';
+
+    return (
+        <div className="modal-overlay visible">
+            <div className="modal-content confirmation-modal-content">
+                <div className="modal-header">
+                    <h2>{title}</h2>
+                </div>
+                <div className="confirmation-modal-body">
+                    {children}
+                </div>
+                <div className="confirmation-modal-actions">
+                    <button className="btn-cancel" onClick={onClose}>Cancel</button>
+                    <button className={confirmButtonClass} onClick={onConfirm}>Confirm</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 
 const ReportsPage = () => {
-    const navigate = useNavigate();
-    
-    // State to manage the active navigation item in the sidebar
-    const [activeNav, setActiveNav] = useState('reports');
+    const [reports, setReports] = useState([]);
+    // State for the confirmation modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedReport, setSelectedReport] = useState(null);
+    const [actionType, setActionType] = useState(''); // 'Accept' or 'Decline'
 
-    // State for filter controls
-    const [reportType, setReportType] = useState('monthly');
-    const [dateFrom, setDateFrom] = useState('2023-11-01');
-    const [dateTo, setDateTo] = useState('2023-11-30');
+    // Load reports from mock data on initial render
+    useEffect(() => {
+        // In a real app, this would be an API call. Here, we use mock data.
+        setReports(mockReports);
+    }, []);
 
-    // Sample data for the report table
-    const reportData = [
-        { id: 1, name: 'Ahmed Mohamed', department: 'Engineering', daysPresent: 21, daysAbsent: 1, daysLate: 2 },
-        { id: 3, name: 'Mohamed Mohsen', department: 'Finance', daysPresent: 22, daysAbsent: 0, daysLate: 0 },
-        { id: 4, name: 'Aliaa Hussein', department: 'Marketing', daysPresent: 19, daysAbsent: 3, daysLate: 5 },
-        { id: 5, name: 'Khaled Walid', department: 'IT Support', daysPresent: 20, daysAbsent: 2, daysLate: 1 },
-    ];
-
-    // Handler for navigation to keep code clean
-    const handleNavigate = (path, navItem) => {
-        setActiveNav(navItem);
-        navigate(path);
+    const handleOpenConfirmation = (report, action) => {
+        setSelectedReport(report);
+        setActionType(action);
+        setIsModalOpen(true);
     };
 
-    const handleGenerateReport = () => {
-        alert(`Generating '${reportType}' report from ${dateFrom} to ${dateTo}.`);
-        // In a real app, you would fetch data from an API here based on the filters.
-    };
-    
-    const handleExport = () => {
-        alert("Exporting report as CSV...");
-        // Logic to convert `reportData` to CSV and trigger a download would go here.
+    const handleConfirmAction = () => {
+        if (!selectedReport || !actionType) return;
+
+        const updatedReports = reports.map(report => 
+            report.id === selectedReport.id ? { ...report, status: actionType === 'Accept' ? 'Accepted' : 'Declined' } : report
+        );
+        setReports(updatedReports);
+        // Here you would also make an API call to save the change
+        
+        // Close the modal
+        setIsModalOpen(false);
+        setSelectedReport(null);
+        setActionType('');
     };
 
     return (
-        <div className="dashboard-layout">
-            {/* Sidebar - Reused from the dashboard */}
-            <aside className="sidebar">
-                <div className="logo-container">
-                    <img src={logo} alt="School Logo" className="logo" />
-                </div>
-                <div className="user-profile">
-                    <img src={managerAvatar} alt="Manager" className="profile-pic-small" />
-                    <div>
-                        <p className="user-name">School Manager</p>
-                        <p className="user-role">Administrator</p>
-                    </div>
-                </div>
-                <nav className="nav-menu">
-                    <ul className="nav-submenu" style={{margin: 0}}>
-                        <li onClick={() => handleNavigate('/admin/dashboard', 'dashboard')} className={activeNav === 'dashboard' ? 'active' : ''}>
-                           <IoHomeOutline className="nav-icon" /> Dashboard
-                        </li>
-                        <li onClick={() => handleNavigate('/admin/reports', 'reports')} className={activeNav === 'reports' ? 'active' : ''}>
-                           <IoDocumentTextOutline className="nav-icon" /> Reports
-                        </li>
-                        <li onClick={() => handleNavigate('/admin/staff', 'staff')} className={activeNav === 'staff' ? 'active' : ''}>
-                           <IoPeopleOutline className="nav-icon" /> Staff List
-                        </li>
-                        <li onClick={() => handleNavigate('/admin/settings', 'settings')} className={activeNav === 'settings' ? 'active' : ''}>
-                           <IoSettingsOutline className="nav-icon" /> Settings
-                        </li>
-                    </ul>
-                </nav>
-            </aside>
-
-            {/* Main Content */}
-            <main className="main-content">
-                <header className="main-header">
-                    <div className="search-bar">
-                        <IoSearchOutline className="search-icon" />
-                        <input type="text" placeholder="Search..." />
-                    </div>
-                    <div className="top-nav">
-                        <a href="/admin/dashboard">Dashboard</a>
-                        <a href="/admin/reports" className="active-link">Reports</a>
-                        <a href='http://localhost:3000/dashboard'>StudentDashboard</a>                       
-                    </div>
-                    <div className="header-actions">
-                        <IoNotificationsOutline className="action-icon" />
-                        <div className="notification-dot"></div>
-                        <img
-                            src={managerAvatar}
-                            alt="Manager"
-                            className="profile-pic-header"
-                            onClick={() => navigate('/admin/profile')}
-                        />
-                        <div className="profile-dot"></div>
-                    </div>
-                </header>
-
-                <section className="content-area">
-                    <div className="content-header">
-                        <h2>Generate Attendance Reports</h2>
-                    </div>
-
-                    {/* Filters Bar */}
-                    <div className="card reports-filter-bar">
-                        <div className="filter-group">
-                            <label htmlFor="report-type">Report Type</label>
-                            <select id="report-type" value={reportType} onChange={(e) => setReportType(e.target.value)}>
-                                <option value="monthly">Monthly Summary</option>
-                                <option value="late">Late Arrivals</option>
-                                <option value="absenteeism">Absenteeism</option>
-                            </select>
+        <>
+            <div className="dashboard-layout">
+                <AdminSidebar />
+                <main className="main-content">
+                    <AdminHeader />
+                    <section className="content-area">
+                        <div className="attendance-table-container card">
+                            <div className="content-header">
+                                <h2>All Specialist Reports</h2>
+                            </div>
+                            <div className="table-responsive">
+                                <table className="attendance-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Student Name</th>
+                                            <th>Submitted By</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {reports.length > 0 ? reports.map((report) => (
+                                        <tr key={report.id}>
+                                            <td data-label="Date">{report.date}</td>
+                                            <td data-label="Student Name">{report.studentName}</td>
+                                            <td data-label="Submitted By">{report.specialistSignature}</td>
+                                            <td data-label="Status">
+                                                <span className={`status-tag status-${report.status.toLowerCase()}`}>{report.status}</span>
+                                            </td>
+                                            <td data-label="Actions" className="actions-cell">
+                                                {report.status === 'Pending' ? (
+                                                    <>
+                                                        <button className="btn-action accept" onClick={() => handleOpenConfirmation(report, 'Accept')}>Accept</button>
+                                                        <button className="btn-action decline" onClick={() => handleOpenConfirmation(report, 'Decline')}>Decline</button>
+                                                    </>
+                                                ) : (
+                                                    <span>Action Taken</span>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    )) : (
+                                        <tr>
+                                            <td colSpan="5" style={{ textAlign: 'center' }}>No reports submitted yet.</td>
+                                        </tr>
+                                    )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div className="filter-group">
-                            <label htmlFor="date-from">From</label>
-                            <input type="date" id="date-from" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}/>
-                        </div>
-                        <div className="filter-group">
-                            <label htmlFor="date-to">To</label>
-                            <input type="date" id="date-to" value={dateTo} onChange={(e) => setDateTo(e.target.value)}/>
-                        </div>
-                        <button className="btn-generate" onClick={handleGenerateReport}>
-                            <IoCalendarOutline /> Generate
-                        </button>
-                    </div>
+                    </section>
+                </main>
+            </div>
 
-                    {/* Report Table Section */}
-                    <div className="attendance-table-container card">
-                        <div className="report-table-header">
-                            <h3>Monthly Attendance Summary</h3>
-                            <button className="btn-export" onClick={handleExport}>
-                                <IoDownloadOutline /> Export CSV
-                            </button>
-                        </div>
-                        <hr />
-                        <table className="attendance-table">
-                            <thead>
-                                <tr>
-                                    <th>Employee Name</th>
-                                    <th>Department</th>
-                                    <th>Days Present</th>
-                                    <th>Days Absent</th>
-                                    <th>Days Late</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {reportData.map((row) => (
-                                    <tr key={row.id}>
-                                        <td>{row.name}</td>
-                                        <td>{row.department}</td>
-                                        <td>{row.daysPresent}</td>
-                                        <td>{row.daysAbsent}</td>
-                                        <td>{row.daysLate}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-            </main>
-        </div>
+            <ConfirmationModal
+                show={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleConfirmAction}
+                title={`Confirm ${actionType}`}
+                actionType={actionType}
+            >
+                <p>Are you sure you want to <strong>{actionType?.toLowerCase()}</strong> the report for <strong>{selectedReport?.studentName}</strong>?</p>
+            </ConfirmationModal>
+        </>
     );
 };
 

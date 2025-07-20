@@ -267,3 +267,145 @@
 .modal-btn.delete { background-color: transparent; color: #dc3545; border-color: #dc3545; }
 .modal-btn.delete:hover { background-color: #dc3545; color: #fff; }
 .modal-btn:disabled { opacity: .7; cursor: not-allowed; }
+/* =========================================================
+   Notes Cards  (Good / Bad Notes)
+   ========================================================= */
+.notes-section {
+    margin-bottom: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.note-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.note-card-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.note-card.good .note-card-header { color: #198754; } /* green-ish */
+.note-card.bad .note-card-header { color: #d90429; }   /* red */
+
+.note-card-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.note-card-list li {
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: #f8f9fa;
+    border-left: 4px solid transparent;
+}
+
+.note-card.good .note-card-list li { border-left-color: #198754; }
+.note-card.bad .note-card-list li { border-left-color: #d90429; }
+
+/* =========================================================
+   Logout Confirmation Modal (compact)
+   ========================================================= */
+.logout-modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 330px;
+    padding: 32px 28px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,.2);
+    animation: slideUp .3s ease-out;
+}
+
+.logout-modal-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #d90429;
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 56px;
+}
+
+.logout-modal-title {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.logout-modal-text {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: #6c757d;
+}
+
+.logout-modal-user {
+    margin: 0 0 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #212529;
+}
+
+.logout-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.logout-modal-btn {
+    min-width: 90px;
+    padding: 8px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all .15s ease;
+}
+
+.logout-modal-btn.cancel {
+    background: #fff;
+    color: #6c757d;
+    border-color: #ced4da;
+}
+.logout-modal-btn.cancel:hover {
+    background: #f8f9fa;
+    border-color: #6c757d;
+}
+
+.logout-modal-btn.confirm {
+    background: #d90429;
+    color: #fff;
+    border-color: #d90429;
+}
+.logout-modal-btn.confirm:hover {
+    background: #b2031f;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+    .logout-modal-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .logout-modal-btn {
+        width: 100%;
+    }
+}

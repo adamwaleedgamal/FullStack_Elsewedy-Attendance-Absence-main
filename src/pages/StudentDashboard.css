@@ -386,3 +386,429 @@ body {
   cursor: not-allowed;
   opacity: 0.6;
 }
+/* =========================================================
+   Multi-Note Dropdown (inline select + chips)
+   ========================================================= */
+.multi-note-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: 300px;
+}
+.multi-note-wrapper.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Trigger pill */
+.multi-note-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  background: #fff;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.15s;
+}
+.multi-note-trigger:hover:not(:disabled) {
+  background: var(--light-pink);
+}
+
+/* Dropdown menu */
+.multi-note-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,.12);
+  z-index: 10;
+}
+.multi-note-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--text-dark);
+}
+.multi-note-menu-item:hover {
+  background: var(--light-pink);
+}
+.multi-note-menu-item input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--primary-red);
+}
+
+.multi-note-menu-divider {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border-color);
+}
+
+/* Other item */
+.multi-note-menu-other {
+  width: 100%;
+  text-align: left;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--primary-red);
+}
+.multi-note-menu-other:hover {
+  background: var(--light-pink);
+}
+
+/* Reuse existing chip styles you already added; only ensure small font works in tight row */
+.note-chips-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 150px;
+}
+
+.note-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.note-chip.good {
+  background: #e8fcef;
+  border-color: #198754;
+  color: #198754;
+}
+.note-chip.bad {
+  background: #ffe8ed;
+  border-color: #d90429;
+  color: #d90429;
+}
+.note-chip button {
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+  cursor: pointer;
+  font-size: 14px;
+  color: inherit;
+}
+
+/* Keep attendance-controls wrapping nicely */
+.attendance-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+/* =========================================================
+   Multi-Notes Inline Chips + Add Note Button
+   ========================================================= */
+.add-note-inline-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--primary-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+.add-note-inline-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+.add-note-inline-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.note-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 220px;
+}
+
+.note-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.note-chip.good {
+  background: #e8fcef;
+  border-color: #198754;
+  color: #198754;
+}
+.note-chip.bad {
+  background: #ffe8ed;
+  border-color: #d90429;
+  color: #d90429;
+}
+.note-chip button {
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  color: inherit;
+}
+
+/* If no notes yet */
+.note-chips-empty {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-right: 8px;
+}
+
+/* Ensure row wraps nicely on smaller widths */
+.attendance-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+   Add Note Modal (Figma Inspired)
+   ========================================================= */
+.note-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn .2s ease;
+}
+
+.note-modal {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 32px 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  animation: slideUp .25s ease-out;
+  text-align: left;
+}
+
+.note-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--text-light);
+}
+.note-modal-close:hover { color: var(--primary-red); }
+
+.note-modal-title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-align: center;
+}
+.note-modal-student {
+  margin: 0 0 24px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--text-light);
+}
+
+.note-modal-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  gap: 6px;
+}
+.note-modal-field label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-light);
+}
+.note-modal-field select,
+.note-modal-field input,
+.note-modal-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+}
+.note-modal-field textarea {
+  min-height: 100px;
+}
+
+.note-modal-upload-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.note-modal-upload-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--primary-red);
+  background: #fff;
+  color: var(--primary-red);
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.note-modal-upload-btn:hover {
+  background: var(--light-pink);
+}
+.note-modal-upload-preview {
+  max-height: 60px;
+  max-width: 100%;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  object-fit: cover;
+}
+
+.note-modal-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.note-modal-btn {
+  min-width: 160px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color .15s;
+}
+.note-modal-btn.good {
+  background: #28a745;
+  border-color: #28a745;
+  color: #fff;
+}
+.note-modal-btn.good:hover { background: #218838; }
+.note-modal-btn.bad {
+  background: var(--primary-red);
+  border-color: var(--primary-red);
+  color: #fff;
+}
+.note-modal-btn.bad:hover { background: #c50022; }
+
+/* Smaller screen adjustments */
+@media (max-width: 480px) {
+  .attendance-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .note-modal {
+    max-width: 90%;
+    padding: 28px 24px 32px;
+  }
+  .note-modal-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .note-modal-btn {
+    width: 100%;
+  }
+}
+/* --- ADD THIS TO THE END OF StaffDashboard.css --- */
+
+/* Confirmation Modal Specific Styles */
+.confirmation-modal-content {
+    max-width: 450px; /* A good size for a confirmation dialog */
+}
+
+.confirmation-modal-body {
+    padding: 10px 0 20px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #475467;
+}
+
+.confirmation-modal-body strong {
+    color: #1d2939;
+}
+
+.confirmation-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.confirmation-modal-actions button {
+    padding: 10px 25px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-cancel {
+    background-color: #f0f2f5;
+    color: #475467;
+    border: 1px solid #ced4da;
+}
+.btn-cancel:hover {
+    background-color: #e9ecef;
+}
+
+.btn-confirm-accept {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+.btn-confirm-accept:hover {
+    background-color: #218838;
+}
+
+.btn-confirm-decline {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+.btn-confirm-decline:hover {
+    background-color: #c82333;
+}   

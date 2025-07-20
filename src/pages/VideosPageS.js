@@ -1,303 +1,175 @@
-// --- File: src/pages/VideosPage.js ---
+// --- File: src/pages/VideosPageS.js (SENIOR VIDEOS - FINAL) ---
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 
-// This component injects all our CSS directly into the webpage's <head>.
+// --- CONSTANT MOCK DATA FOR SENIOR ---
+const mockData = {
+  '1': { // Flutter
+    videos: [
+      { id: 101, title: 'Intro to Flutter', description: 'Build beautiful mobile apps with Flutter.', videoUrl: 'https://www.youtube.com/watch?v=4hjd0I-j2-s' },
+      { id: 102, title: 'Widgets Explained', description: 'Understand the core building block of Flutter.', videoUrl: 'https://www.youtube.com/watch?v=pTQBw40yvC0' }
+    ]
+  },
+  '2': { // Asp.net
+    videos: [
+      { id: 201, title: 'What is ASP.NET Core?', description: 'Build robust web applications with Microsoft\'s framework.', videoUrl: 'https://www.youtube.com/watch?v=lE8NdaX97m0' },
+      { id: 202, title: 'Building your first API', description: 'Create a simple web API.', videoUrl: 'https://www.youtube.com/watch?v=pa9iWD6kY6I' }
+    ]
+  },
+  '4': { // MultiMedia
+    videos: [ { id: 401, title: 'Handling Images & Video', description: 'Learn the basics of processing multimedia content.', videoUrl: 'https://www.youtube.com/watch?v=j_eX_e-g3s4' } ]
+  },
+  '5': { // Code Modification
+    videos: [ { id: 501, title: 'Refactoring Principles', description: 'How to improve the design of existing code.', videoUrl: 'https://www.youtube.com/watch?v=D-a-eK4i_0M' } ]
+  },
+  '6': { // Embded Systmem
+    videos: [ { id: 601, title: 'Intro to Embedded Systems', description: 'Working with microcontrollers and hardware.', videoUrl: 'https://www.youtube.com/watch?v=K834g2I-sZA' } ]
+  },
+  '7': { // Internet Of Things Network (IOT)
+    videos: [ { id: 701, title: 'What is IoT?', description: 'Understanding the network of connected devices.', videoUrl: 'https://www.youtube.com/watch?v=QSIPNhOiMoY' } ]
+  }
+};
+const defaultVideos = [{ id: 999, title: 'Coming Soon!', description: 'Videos for this course are being prepared.', videoUrl: 'https://www.youtube.com/watch?v=L_LUpnjgPso' }];
+
+// --- Helper Functions & UI Components ---
+const getEmbedUrl = (url) => {
+    if (!url) return '';
+    try {
+        const urlObj = new URL(url);
+        const videoId = urlObj.searchParams.get('v');
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+    } catch (e) { return url; }
+};
+
 const PageStyles = () => {
     const css = `
-        /* Global styles */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        :root {
-            --theme-color: #E60028; --text-primary: #1d2939; --text-secondary: #475467;
-            --background-light: #f9fafb; --background-white: #ffffff; --border-color: #eaecf0;
-            --success-color: #16a34a; --error-color: #d92d20;
-        }
-        body { font-family: 'Inter', sans-serif; background-color: var(--background-white); color: var(--text-primary); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .button {
-            display: inline-block; padding: 10px 20px; font-size: 0.95rem; font-weight: 600;
-            border-radius: 8px; border: none; cursor: pointer; text-align: center;
-            transition: all 0.2s; text-decoration: none;
-        }
-        .button.primary { background-color: var(--theme-color); color: white; }
-        .button.secondary { background-color: var(--background-light); color: var(--text-primary); border: 1px solid var(--border-color); }
-        .button.delete { background-color: var(--error-color); color: white; }
-        .button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        /* Layout & Header */
-        .videos-page-layout { padding-top: 80px; }
+        :root { --theme-color: #E60028; --text-primary: #1d2939; --text-secondary: #475467; --background-light: #f9fafb; --background-white: #ffffff; --border-color: #eaecf0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--background-light); color: var(--text-primary); }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        .page-layout { padding-top: 80px; }
         header { padding: 18px 0; position: fixed; top: 0; width: 100%; z-index: 999; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); }
         nav.container { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); text-decoration: none; }
-
-        /* Video Page Specific Layout */
-        .page-header { padding: 40px 0; background-color: var(--background-light); border-bottom: 1px solid var(--border-color); }
-        .page-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .page-header p { font-size: 1.1rem; color: var(--text-secondary); }
-        .page-header .container { display: flex; justify-content: space-between; align-items: center; }
-
-        .video-content-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr; /* Main content on left, playlist on right */
-            gap: 40px;
-            padding: 40px 0;
-        }
-
-        /* Video Player */
-        .video-player-container { position: sticky; top: 120px; }
-        .video-player {
-            position: relative; padding-bottom: 56.25%; /* 16:9 aspect ratio */
-            height: 0; background: #000; border-radius: 16px;
-            overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        }
-        .video-player iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        .video-details { margin-top: 20px; }
-        .video-details h2 { font-size: 1.75rem; }
-
-        /* Video Playlist */
-        .video-playlist h3 { font-size: 1.2rem; margin-bottom: 1rem; }
-        .video-list { list-style: none; padding: 0; max-height: 80vh; overflow-y: auto; }
-        .video-list-item {
-            display: flex; gap: 15px; padding: 15px;
-            border-radius: 12px; border: 1px solid var(--border-color);
-            margin-bottom: 15px; cursor: pointer; transition: background-color 0.2s, box-shadow 0.2s;
-        }
-        .video-list-item:hover { background-color: var(--background-light); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .video-list-item.active { background-color: #fee2e2; border-color: var(--theme-color); }
-        .video-list-item-info { flex-grow: 1; }
-        .video-list-item-info h4 { font-size: 1rem; margin-bottom: 4px; color: var(--text-primary); }
-        .video-list-item-info p { font-size: 0.9rem; margin: 0; }
-        .video-list-item-actions { margin-left: auto; display: flex; align-items: center; gap: 5px; }
-        .video-list-item-actions button { background: none; border: none; cursor: pointer; padding: 5px; color: var(--text-secondary); }
-        .video-list-item-actions button:hover { color: var(--text-primary); }
-        
-        .final-line { height: 1px; background-color: var(--border-color); margin: 80px auto; width: 100%; }
-        .loading-error-state { text-align: center; padding: 150px 20px; font-size: 1.2rem; font-weight: 600; color: var(--text-secondary); }
-
-        /* Modal Styles */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
-        .modal-overlay.visible { opacity: 1; pointer-events: all; }
-        .modal-content { background: var(--background-white); padding: 40px; border-radius: 16px; width: 90%; max-width: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: scale(0.95); transition: transform 0.3s ease; }
-        .modal-overlay.visible .modal-content { transform: scale(1); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .modal-header h2 { font-size: 1.8rem; margin: 0; }
-        .close-button { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-secondary); }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 1rem; }
-        .submit-button { width: 100%; padding: 14px; font-size: 1.1rem; font-weight: 700; }
-        .submit-button:disabled { background-color: #fca5a5; cursor: not-allowed; }
-        .status-message { margin-top: 20px; padding: 15px; border-radius: 8px; text-align: center; font-weight: 600; }
-        .status-message.error { background-color: #fee2e2; color: var(--error-color); }
+        .back-link-button { display: inline-block; padding: 10px 20px; font-size: 0.95rem; font-weight: 600; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer; text-align: center; transition: all 0.2s; text-decoration: none; background-color: var(--background-white); color: var(--text-primary); }
+        .back-link-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .course-room-container { padding: 40px 20px; }
+        .course-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        @media (max-width: 992px) { .course-layout { grid-template-columns: 1fr; } }
+        .main-content, .sidebar-content { display: flex; flex-direction: column; gap: 20px; }
+        .video-player-container, .tab-content-container, .playlist-container { background: var(--background-white); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .video-embed { width: 100%; aspect-ratio: 16 / 9; border-radius: 8px; border: none; background-color: #000; }
+        .tab-content h3 { margin-top: 0; }
+        .tab-content p { line-height: 1.6; }
+        .playlist-container h3 { margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+        .playlist-items { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; }
+        .playlist-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer; transition: all 0.2s ease; }
+        .playlist-item:hover { border-color: var(--theme-color); transform: translateX(5px); }
+        .playlist-item.active { background-color: #feefef; border-color: var(--theme-color); font-weight: 700; }
+        .playlist-item-title { flex-grow: 1; padding-right: 15px; }
+        .playlist-item-duration { color: var(--text-secondary); font-size: 0.9rem; }
+        .loading-error-state { text-align: center; padding: 200px 20px; font-size: 1.2rem; font-weight: 600; color: var(--text-secondary); }
     `;
     return React.createElement('style', null, css);
 };
 
-// --- SVG Icons ---
-const CloseIcon = () => React.createElement('svg', { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round"}, React.createElement('path', { d: "M18 6L6 18M6 6l12 12" }));
-const EditIcon = () => React.createElement('svg', { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M12 20h9" }), React.createElement('path', { d: "M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"}));
-const DeleteIcon = () => React.createElement('svg', { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, React.createElement('path', { d: "M3 6h18" }), React.createElement('path', { d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"}), React.createElement('path', { d: "M10 11v6"}), React.createElement('path', { d: "M14 11v6"}));
-
-// --- Self-Contained Components ---
-const Header = ({ onAddClick }) => React.createElement('header', null,
+const CourseHeaderS = ({ stackInfo }) => React.createElement('header', null,
     React.createElement('nav', { className: 'container' },
-        React.createElement(Link, { to: "/homepage", className: 'logo' }, 'Sewedy Learning'),
-        React.createElement('div', { style: { display: 'flex', gap: '20px' } },
-            React.createElement(Link, { to: "/stacks", className: 'button secondary' }, 'Back to All Stacks'),
-            React.createElement('button', { onClick: onAddClick, className: 'button primary' }, 'Add New Video')
-        )
+        React.createElement(Link, { to: "/homepage", className: 'logo' }, 'ELearning'),
+        React.createElement(Link, { to: "/stacks/senior", className: 'back-link-button' }, `‹ Back to Senior Stacks`)
     )
 );
 
-const VideoFormModal = ({ show, onClose, video, stackId, onSave }) => {
-    const defaultFormState = { title: '', description: '', videoUrl: '', category: stackId, grade: '', subject: '', content: '' };
-    const [formData, setFormData] = useState(defaultFormState);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+const VideoPlayer = ({ video }) => {
+    if (!video) return null;
+    return React.createElement('div', { className: 'video-player-container' },
+        React.createElement('h2', null, video.title),
+        React.createElement('iframe', {
+            key: video.id, src: getEmbedUrl(video.videoUrl), title: video.title, className: 'video-embed',
+            frameBorder: '0', allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture', allowFullScreen: true
+        })
+    );
+};
 
-    useEffect(() => {
-        if (show) {
-            setError(null);
-            setFormData(video ? { ...video, category: video.category || stackId } : { ...defaultFormState, category: stackId });
-        }
-    }, [video, show, stackId]);
-    
-    const getYouTubeId = (url) => {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const match = url.match(regExp);
-        return (match && match[2].length === 11) ? match[2] : null;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        const videoId = getYouTubeId(formData.videoUrl);
-        const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : formData.videoUrl;
-        const finalFormData = { ...formData, videoUrl: embedUrl };
-        
-        setIsLoading(true);
-        setError(null);
-        const isUpdating = !!video;
-        const url = isUpdating ? `https://sewedylearn.runasp.net/api/Videos/UpdateVideo/${video.id}` : 'https://sewedylearn.runasp.net/api/Videos/AddVideo';
-        const method = isUpdating ? 'PUT' : 'POST';
-
-        try {
-            const response = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(finalFormData) });
-            if (!response.ok) throw new Error(await response.text() || 'API Request Failed');
-            onSave();
-            onClose();
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    if (!show) return null;
-
-    return React.createElement('div', { className: 'modal-overlay visible' },
-        React.createElement('div', { className: 'modal-content' },
-            React.createElement('div', { className: 'modal-header' },
-                React.createElement('h2', null, video ? 'Update Video' : 'Add New Video'),
-                React.createElement('button', { onClick: onClose, className: 'close-button' }, React.createElement(CloseIcon))
-            ),
-            React.createElement('form', { onSubmit: handleSubmit },
-                React.createElement('div', { className: 'form-group' }, React.createElement('label', null, 'Title'), React.createElement('input', { type: 'text', value: formData.title, onChange: (e) => setFormData({...formData, title: e.target.value }), required: true })),
-                React.createElement('div', { className: 'form-group' }, React.createElement('label', null, 'Description'), React.createElement('textarea', { value: formData.description, onChange: (e) => setFormData({...formData, description: e.target.value }), required: true, rows: 3 })),
-                React.createElement('div', { className: 'form-group' }, React.createElement('label', null, 'YouTube URL'), React.createElement('input', { type: 'text', value: formData.videoUrl, onChange: (e) => setFormData({...formData, videoUrl: e.target.value }), required: true })),
-                React.createElement('button', { type: 'submit', className: 'button primary submit-button', disabled: isLoading }, isLoading ? 'Saving...' : 'Save Changes'),
-                error && React.createElement('div', { className: 'status-message error' }, error)
-            )
+const TabbedContent = ({ video }) => {
+    if (!video) return null;
+    return React.createElement('div', { className: 'tab-content-container' },
+        React.createElement('div', { className: 'tab-content' },
+            React.createElement('h3', null, "Overview"),
+            React.createElement('p', null, video.description)
         )
     );
 };
 
-// --- THE MAIN VIDEOS PAGE COMPONENT ---
-const VideosPage = () => {
+const Playlist = ({ videos, currentVideo, onVideoSelect }) => {
+    return React.createElement('div', { className: 'playlist-container' },
+        React.createElement('h3', null, 'Course Content'),
+        React.createElement('div', { className: 'playlist-items' },
+            videos.map((video, index) => React.createElement('div', {
+                key: video.id,
+                className: `playlist-item ${currentVideo && currentVideo.id === video.id ? 'active' : ''}`,
+                onClick: () => onVideoSelect(video)
+            },
+                React.createElement('span', { className: 'playlist-item-title' }, `${index + 1}. ${video.title}`),
+                React.createElement('span', { className: 'playlist-item-duration' }, `${Math.floor(Math.random() * 20) + 5}min`)
+            ))
+        )
+    );
+};
+
+const VideosPageS = () => {
     const { stackId } = useParams();
-    const [allVideos, setAllVideos] = useState([]);
+    const [stackInfo, setStackInfo] = useState(null);
+    const [videos, setVideos] = useState([]);
     const [currentVideo, setCurrentVideo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingVideo, setEditingVideo] = useState(null);
-
-    const fetchVideos = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const response = await fetch('https://sewedylearn.runasp.net/api/Videos/GetAllVideos');
-            if (!response.ok) throw new Error('Failed to fetch videos.');
-            const data = await response.json();
-            setAllVideos(data);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     useEffect(() => {
-        fetchVideos();
-    }, []);
-
-    const filteredVideos = allVideos.filter(video => video.category === stackId);
-
-    useEffect(() => {
-        setCurrentVideo(filteredVideos.length > 0 ? filteredVideos[0] : null);
-    }, [allVideos, stackId]);
-
-    const handleOpenAddModal = () => {
-        setEditingVideo(null);
-        setIsModalOpen(true);
-    };
-
-    const handleOpenEditModal = (video) => {
-        setEditingVideo(video);
-        setIsModalOpen(true);
-    };
-
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this video?')) {
+        const fetchCourseData = async () => {
+            setIsLoading(true); setError(null);
             try {
-                const response = await fetch(`https://sewedylearn.runasp.net/api/Videos/DeleteVideo/${id}`, { method: 'DELETE' });
-                if (!response.ok) throw new Error(await response.text() || 'Failed to delete video.');
-                alert('Video deleted successfully!');
-                fetchVideos();
-            } catch (err) {
-                alert(`Error: ${err.message}`);
-            }
-        }
-    };
-    
-    const renderContent = () => {
-        if (isLoading) return React.createElement('div', { className: 'loading-error-state' }, 'Loading Videos...');
-        if (error) return React.createElement('div', { className: 'loading-error-state' }, `Error: ${error}`);
-        if (filteredVideos.length === 0) return React.createElement('div', { className: 'loading-error-state' }, 'No videos found for this stack. Try adding one!');
+                const response = await fetch('https://sewedylearn.runasp.net/api/CoreStackSenior/GetCoresS');
+                if (!response.ok) throw new Error('Could not fetch stack list.');
+                const allStacks = await response.json();
+                const currentStack = allStacks.find(stack => stack.id.toString() === stackId);
+                if (!currentStack) throw new Error(`Senior Course with ID ${stackId} not found.`);
+                setStackInfo(currentStack);
+                let videosForCourse = mockData[stackId]?.videos || defaultVideos;
+                setVideos(videosForCourse);
+                if (videosForCourse.length > 0) setCurrentVideo(videosForCourse[0]);
+            } catch (err) { setError(err.message); } finally { setIsLoading(false); }
+        };
+        fetchCourseData();
+    }, [stackId]);
 
-        return React.createElement('div', { className: 'video-content-layout' },
-            React.createElement('div', { className: 'video-player-container' },
-                currentVideo && React.createElement(React.Fragment, null,
-                    React.createElement('div', { className: 'video-player' },
-                        React.createElement('iframe', {
-                            src: currentVideo.videoUrl, title: currentVideo.title, frameBorder: "0",
-                            allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
-                            allowFullScreen: true
-                        })
+    const handleVideoSelect = (video) => setCurrentVideo(video);
+
+    const renderPageContent = () => {
+        if (isLoading) return React.createElement('div', { className: 'loading-error-state' }, 'Loading Course...');
+        if (error) return React.createElement('div', { className: 'loading-error-state' }, `Error: ${error}`);
+        if (videos.length === 0) return React.createElement('div', { className: 'loading-error-state' }, `No videos for "${stackInfo?.title}".`);
+        return React.createElement('main', { className: 'course-room-container' },
+            React.createElement('div', { className: 'container' },
+                React.createElement('div', { className: 'course-layout' },
+                    React.createElement('div', { className: 'main-content' },
+                        React.createElement(VideoPlayer, { video: currentVideo }),
+                        React.createElement(TabbedContent, { video: currentVideo })
                     ),
-                    React.createElement('div', { className: 'video-details' },
-                        React.createElement('h2', null, currentVideo.title),
-                        React.createElement('p', null, currentVideo.description)
-                    )
-                )
-            ),
-            React.createElement('aside', { className: 'video-playlist' },
-                React.createElement('h3', null, `Videos in this Stack (${filteredVideos.length})`),
-                React.createElement('ul', { className: 'video-list' },
-                    filteredVideos.map(video =>
-                        React.createElement('li', {
-                            key: video.id,
-                            className: `video-list-item ${currentVideo && currentVideo.id === video.id ? 'active' : ''}`,
-                            onClick: () => setCurrentVideo(video)
-                        },
-                            React.createElement('div', { className: 'video-list-item-info' },
-                                React.createElement('h4', null, video.title)
-                            ),
-                            React.createElement('div', { className: 'video-list-item-actions' },
-                                React.createElement('button', { onClick: (e) => { e.stopPropagation(); handleOpenEditModal(video); } }, React.createElement(EditIcon)),
-                                React.createElement('button', { onClick: (e) => { e.stopPropagation(); handleDelete(video.id); } }, React.createElement(DeleteIcon))
-                            )
-                        )
+                    React.createElement('div', { className: 'sidebar-content' },
+                        React.createElement(Playlist, { videos: videos, currentVideo: currentVideo, onVideoSelect: handleVideoSelect })
                     )
                 )
             )
         );
     };
 
-    return React.createElement('div', { className: 'videos-page-layout' },
+    return React.createElement('div', { className: 'page-layout' },
         React.createElement(PageStyles, null),
-        React.createElement(Header, { onAddClick: handleOpenAddModal }),
-        React.createElement('main', null,
-            React.createElement('section', { className: 'page-header' },
-                React.createElement('div', { className: 'container' },
-                    React.createElement('h1', null, 'Video Library'),
-                    React.createElement('p', null, 'Manage the videos for this learning path.')
-                )
-            ),
-            React.createElement('div', { className: 'container' }, renderContent()),
-            React.createElement('div', { className: 'container' },
-                React.createElement('div', { className: 'final-line' })
-            )
-        ),
-        React.createElement(VideoFormModal, {
-            show: isModalOpen,
-            onClose: () => setIsModalOpen(false),
-            video: editingVideo,
-            stackId: stackId,
-            onSave: fetchVideos
-        })
+        React.createElement(CourseHeaderS, { stackInfo: stackInfo }),
+        renderPageContent()
     );
 };
 
-export default VideosPage;
+export default VideosPageS;

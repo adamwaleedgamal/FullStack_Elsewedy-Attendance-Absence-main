@@ -1,13 +1,15 @@
+// --- File: src/pages/components/AdminSidebar.js (CORRECTED) ---
+
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   IoHomeOutline, IoDocumentTextOutline, IoPeopleOutline, IoSettingsOutline,
-  IoMenuOutline, IoCloseOutline
+  IoMenuOutline, IoCloseOutline, IoSchoolOutline, IoStarOutline
 } from 'react-icons/io5';
 
-import '../StudentDashboard.css'; // Reusing base styles
-import '../StaffDashboard.css';   // Reusing admin styles
-import logo from '../../assets/logo.png'; // Adjust the path as needed
+import '../StudentDashboard.css';
+import '../StaffDashboard.css';
+import logo from '../../assets/logo.png';
 import managerAvatar from '../../assets/manger.png';
 
 const AdminSidebar = () => {
@@ -15,14 +17,16 @@ const AdminSidebar = () => {
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+    // --- UPDATED NAVIGATION ITEMS ---
     const navItems = [
         { path: '/admin/dashboard', label: 'Dashboard', icon: <IoHomeOutline className="nav-icon" /> },
         { path: '/admin/reports', label: 'Reports', icon: <IoDocumentTextOutline className="nav-icon" /> },
         { path: '/admin/staff', label: 'Staff List', icon: <IoPeopleOutline className="nav-icon" /> },
+        { path: '/admin/student-list', label: 'Student List', icon: <IoSchoolOutline className="nav-icon" /> }, // New
+        { path: '/admin/specialists', label: 'specialists', icon: <IoStarOutline className="nav-icon" /> },     // New
         { path: '/admin/settings', label: 'Settings', icon: <IoSettingsOutline className="nav-icon" /> },
     ];
     
-    // A function to handle navigation and close the sidebar on mobile
     const handleNavigate = (path) => {
         navigate(path);
         setIsSidebarOpen(false);
@@ -30,7 +34,6 @@ const AdminSidebar = () => {
 
     return (
         <>
-            {/* Mobile menu button, outside the sidebar */}
             <button className="mobile-menu-toggle" onClick={() => setIsSidebarOpen(true)}>
               <IoMenuOutline />
             </button>

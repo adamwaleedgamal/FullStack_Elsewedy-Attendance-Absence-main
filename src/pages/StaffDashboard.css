@@ -737,3 +737,138 @@ body {
 .add-staff-btn svg {
     font-size: 20px;
 }
+/* --- ADD THESE STYLES TO THE END OF StaffDashboard.css --- */
+
+/* Style for the header in the student list card to align items nicely */
+.student-list-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Reusing the filter style from your Reports page for consistency */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.filter-group select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    background-color: #fff;
+    min-width: 150px; /* Give the dropdown some space */
+}
+
+/* Use button instead of anchor tag for nav-tab for better accessibility */
+.nav-tab {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+}
+/* --- ADD/VERIFY THESE STYLES IN StaffDashboard.css --- */
+
+/* Style for the header in the student list card */
+.student-list-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* Style for the dropdown filter group */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.filter-group select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    background-color: #fff;
+    min-width: 150px;
+}
+
+/* Base styles for tab buttons */
+.nav-tab {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    text-decoration: none;
+    color: #6c757d;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 15px; /* Ensure font size is consistent */
+}
+
+.nav-tab:hover {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.nav-tab.active {
+    background-color: #4a69bd;
+    color: white;
+    box-shadow: 0 2px 8px rgba(74, 105, 189, 0.3);
+}
+/* --- ADD THIS TO StaffDashboard.css --- */
+
+/* New Status Tags for Reports Page */
+.status-tag.status-accepted { background-color: #28a745; } /* Green */
+.status-tag.status-declined { background-color: #dc3545; } /* Red */
+.status-tag.status-pending { background-color: #6c757d; } /* Gray */
+
+/* Action buttons for the reports table */
+.actions-cell {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-action:hover {
+    opacity: 0.8;
+}
+
+.btn-action.accept {
+    background-color: #28a745; /* Green */
+}
+
+.btn-action.decline {
+    background-color: #dc3545; /* Red */
+}
