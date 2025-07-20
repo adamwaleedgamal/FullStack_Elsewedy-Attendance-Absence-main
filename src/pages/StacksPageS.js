@@ -25,7 +25,7 @@ const StackFormModalS = ({ show, onClose, stack, onSave }) => {
     const defaultFormState = { title: '', description: '', image: '', mainPorints: '' };
     const [formData, setFormData] = useState(defaultFormState);
 
-    useEffect(() => { if (show) setFormData(stack ? stack : defaultFormState) }, []);
+    useEffect(() => { if (show) setFormData(stack ? stack : defaultFormState) },[defaultFormState, show, stack]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
