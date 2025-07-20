@@ -24,7 +24,7 @@ const HeaderW = ({ onAddClick }) => React.createElement('header', null,
 const StackFormModalW = ({ show, onClose, stack, onSave }) => {
     const defaultFormState = { title: '', description: '', image: '', mainPorints: '' };
     const [formData, setFormData] = useState(defaultFormState);
-    useEffect(() => { if (show) setFormData(stack ? stack : defaultFormState) }, [stack, show]);
+    useEffect(() => { if (show) setFormData(stack ? stack : defaultFormState) }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

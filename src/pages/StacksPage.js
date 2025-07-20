@@ -110,7 +110,7 @@ const StackFormModal = ({ show, onClose, stack, onSave }) => {
             setError(null);
             setFormData(stack ? stack : defaultFormState);
         }
-    }, [stack, show]);
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
